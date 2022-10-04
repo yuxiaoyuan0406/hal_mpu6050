@@ -94,10 +94,10 @@ inline HAL_StatusTypeDef HAL_MPU6050_SetAcce(MPU_HandleTypeDef *hmpu, uint8_t va
 }
 
 /**
-  * @brief 设置数字低通滤波器
+  * @brief Set LPF Frequency
   * @param hmpu Pointer to a MPU_HandleTypeDef structure that contains
   *                the configuration information
-  * @param lpf 低通滤波器频率
+  * @param lpf LPF freqency
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MPU6050_SetLPF(MPU_HandleTypeDef *hmpu, uint16_t lpf)
@@ -113,10 +113,10 @@ HAL_StatusTypeDef HAL_MPU6050_SetLPF(MPU_HandleTypeDef *hmpu, uint16_t lpf)
 }
 
 /**
-  * @brief 设置采样率
+  * @brief Set Sampling Rate
   * @param hmpu Pointer to a MPU_HandleTypeDef structure that contains
   *                the configuration information
-  * @param rate 采样频率(4~1000 Hz)
+  * @param rate Sampling rate(4~1000 Hz)
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_MPU6050_SetSamplingRate(MPU_HandleTypeDef *hmpu, uint16_t rate)
