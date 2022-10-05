@@ -141,7 +141,7 @@ HAL_StatusTypeDef HAL_MPU6050_SetSamplingRate(MPU_HandleTypeDef *hmpu, uint16_t 
   */
 inline HAL_StatusTypeDef HAL_MPU6050_WriteReg(MPU_HandleTypeDef *hmpu, uint8_t RegAddress, uint8_t *pData)
 {
-  return HAL_I2C_Mem_Write(hmpu->hi2c, hmpu->address, RegAddress, I2C_MEMADD_SIZE_8BIT, pData, 1, 1000);
+  return HAL_I2C_Mem_Write(hmpu->hi2c, hmpu->address, RegAddress, I2C_MEMADD_SIZE_8BIT, pData, 1, 1);
 }
 
 /**
@@ -172,7 +172,7 @@ inline HAL_StatusTypeDef HAL_MPU6050_WriteRegs(MPU_HandleTypeDef *hmpu, uint8_t 
   */
 inline HAL_StatusTypeDef HAL_MPU6050_ReadReg(MPU_HandleTypeDef *hmpu, uint8_t RegAddress, uint8_t *pData)
 {
-  return HAL_I2C_Mem_Read(hmpu->hi2c, hmpu->address, RegAddress, I2C_MEMADD_SIZE_8BIT, pData, 1, 1000);
+  return HAL_I2C_Mem_Read(hmpu->hi2c, hmpu->address, RegAddress, I2C_MEMADD_SIZE_8BIT, pData, 1, 1);
 }
 
 /**
@@ -204,7 +204,7 @@ HAL_StatusTypeDef HAL_MPU6050_ReadAcce_Raw(MPU_HandleTypeDef *hmpu, MPU_DataType
 {
   uint8_t temp[6];
   HAL_ValidOperation(HAL_I2C_Mem_Read, 
-    hmpu->hi2c, hmpu->address, MPU_REG_ACCEL_XOUT_H, I2C_MEMADD_SIZE_8BIT, temp, sizeof(temp), 1000);
+    hmpu->hi2c, hmpu->address, MPU_REG_ACCEL_XOUT_H, I2C_MEMADD_SIZE_8BIT, temp, sizeof(temp), 1);
   // uint8_t *raw = (uint8_t *)&pData->AcceXRaw;
   for(int i = 0; i < 3; i++)
   {
@@ -225,7 +225,7 @@ HAL_StatusTypeDef HAL_MPU6050_ReadGyro_Raw(MPU_HandleTypeDef *hmpu, MPU_DataType
 {
   uint8_t temp[6];
   HAL_ValidOperation(HAL_I2C_Mem_Read, 
-    hmpu->hi2c, hmpu->address, MPU_REG_GYRO_XOUT_H, I2C_MEMADD_SIZE_8BIT, temp, sizeof(temp), 1000);
+    hmpu->hi2c, hmpu->address, MPU_REG_GYRO_XOUT_H, I2C_MEMADD_SIZE_8BIT, temp, sizeof(temp), 1);
   uint8_t *raw = (uint8_t *)&pData->GyroXRaw;
   for(int i = 0; i < 3; i++)
   {
@@ -244,25 +244,25 @@ HAL_StatusTypeDef HAL_MPU6050_ReadGyro_Raw(MPU_HandleTypeDef *hmpu, MPU_DataType
   */
 void HAL_MPU6050_Convert_Gyro(MPU_HandleTypeDef *hmpu, MPU_DataTypeDef *pData)
 {
-  float factor = 1;
-  switch (hmpu->GyroFullScale)
-  {
-  case MPU_GYRO_FS_250:
-    factor = 131.0;
-    break;
-  case MPU_GYRO_FS_500:
-    factor = 65.5;
-    break;
-  case MPU_GYRO_FS_1000:
-    factor = 32.8;
-    break;
-  case MPU_GYRO_FS_2000:
-    factor = 16.4;
-    break;
-  default:
-    factor = 16384.0;
-    break;
-  }
+  float factor = 131.0 / (1 << hmpu->GyroFullScale);
+  // switch (hmpu->GyroFullScale)
+  // {
+  // case MPU_GYRO_FS_250:
+  //   factor = 131.0;
+  //   break;
+  // case MPU_GYRO_FS_500:
+  //   factor = 65.5;
+  //   break;
+  // case MPU_GYRO_FS_1000:
+  //   factor = 32.8;
+  //   break;
+  // case MPU_GYRO_FS_2000:
+  //   factor = 16.4;
+  //   break;
+  // default:
+  //   factor = 16384.0;
+  //   break;
+  // }
   for(int i = 0; i < 3; i++)
   {
     *(&pData->Gx + i) = *(&pData->GyroXRaw + i) / factor;
@@ -278,25 +278,25 @@ void HAL_MPU6050_Convert_Gyro(MPU_HandleTypeDef *hmpu, MPU_DataTypeDef *pData)
   */
 void HAL_MPU6050_Convert_Acce(MPU_HandleTypeDef *hmpu, MPU_DataTypeDef *pData)
 {
-  float factor = 1;
-  switch (hmpu->AcceFullScale)
-  {
-  case MPU_ACCE_FS_2G:
-    factor = 16384.0;
-    break;
-  case MPU_ACCE_FS_4G:
-    factor = 8192.0;
-    break;
-  case MPU_ACCE_FS_8G:
-    factor = 4096.0;
-    break;
-  case MPU_ACCE_FS_16G:
-    factor = 2048;
-    break;
-  default:
-    factor = 16384.0;
-    break;
-  }
+  float factor = 16384.0 / (1 << hmpu->AcceFullScale);
+  // switch (hmpu->AcceFullScale)
+  // {
+  // case MPU_ACCE_FS_2G:
+  //   factor = 16384.0;
+  //   break;
+  // case MPU_ACCE_FS_4G:
+  //   factor = 8192.0;
+  //   break;
+  // case MPU_ACCE_FS_8G:
+  //   factor = 4096.0;
+  //   break;
+  // case MPU_ACCE_FS_16G:
+  //   factor = 2048;
+  //   break;
+  // default:
+  //   factor = 16384.0;
+  //   break;
+  // }
   for(int i = 0; i < 3; i++)
   {
     *(&pData->Ax + i) = *(&pData->AcceXRaw + i) / factor;
